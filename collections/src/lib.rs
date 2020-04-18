@@ -21,12 +21,25 @@ fn count<T: Eq + Copy + Hash>(it: &[T]) -> HashMap<T, i64> {
     result
 }
 
-fn mode< T: Eq + Copy + Hash + Ord>(it: &[T]) -> T {
+fn mode<T: Eq + Copy + Hash + Ord>(it: &[T]) -> T {
     let counter = count(it);
     let mut pairs: Vec<(&T, &i64)> = counter.iter().collect();
     pairs.sort_by(|(_, val1), (_, val2)| val1.partial_cmp(val2).unwrap());
     let (key, _) = pairs.last().unwrap();
     **key
+}
+
+use std::collections::HashSet;
+use std::iter::FromIterator;
+
+fn to_pig_latin(word: &mut String) {
+    let VOWELS: HashSet<char> = HashSet::from_iter("aeiou".chars());
+    if !VOWELS.contains(&word.char_indices().next().unwrap().1.to_ascii_lowercase()) {
+        let ch = word.remove(0);
+        word.push_str(&format!("-{}ay", ch.to_string()));
+    } else {
+        word.push_str("-hay");
+    }
 }
 
 #[cfg(test)]
@@ -48,5 +61,15 @@ mod tests {
     fn mode_sanity() {
         assert_eq!(mode(&vec![1, 1, 2, 2, 1, 3]), 1);
         assert_eq!(mode(&vec!["a", "b", "b", "c"]), "b")
+    }
+
+    #[test]
+    fn pig_latin_sanity() {
+        let mut a = "first".to_owned();
+        to_pig_latin(&mut a);
+        assert_eq!(a, "irst-fay");
+        let mut b = "apple".to_owned();
+        to_pig_latin(&mut b);
+        assert_eq!(b, "apple-hay");
     }
 }
