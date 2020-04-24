@@ -63,7 +63,7 @@ pub fn process_command(employees: &mut Employees, command: &str) -> Option<Strin
             .push(add.name("name").unwrap().as_str().to_owned());
         None
     } else if let Some(list_match) = list_command.captures(command) {
-        let format_department = |department: &str, names: &[String]| {
+        fn format_department(department: &str, names: &[String]) -> String {
             format!("{}: {}", department, sorted(&names).join(", "))
         };
 
